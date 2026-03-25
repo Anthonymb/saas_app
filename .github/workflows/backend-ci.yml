@@ -1,0 +1,34 @@
+name: Backend CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Import app
+        env:
+          SECRET_KEY: 0123456789abcdef0123456789abcdef
+        run: |
+          python -c "import app.main; print('app import ok')"
+
+      - name: Run tests
+        env:
+          SECRET_KEY: 0123456789abcdef0123456789abcdef
+        run: |
+          pytest -q
